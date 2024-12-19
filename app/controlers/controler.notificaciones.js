@@ -2,11 +2,11 @@ import pool from "../config/db.mysql.js";
 
 export const listNoti = async (req, res) =>{
 	try {
-		const respuesta = await pool.query('SELECT * FROM notificiones');
+		const respuesta = await pool.query('SELECT * FROM notificaciones');
 		if (respuesta.length > 0) {
 			res.json(respuesta[0]);
 		} else {
-			res.json({ message: 'no hay ninguna notificacion guardada'})
+			res.json({ message: 'no hay ninguna notificaciones guardada'})
 		}
 	} catch (error) {
 		res.json({
@@ -63,7 +63,7 @@ export const getNoti = async (req, res) => {
     }
 
     // Construye la consulta SQL con las condiciones dinámicas
-    const sqlQuery = `SELECT * FROM notificiones WHERE ${conditions.join(' AND ')}`;
+    const sqlQuery = `SELECT * FROM notificaciones WHERE ${conditions.join(' AND ')}`;
 
     try {
         // Ejecuta la consulta con los parámetros
@@ -79,3 +79,7 @@ export const getNoti = async (req, res) => {
         res.status(500).json({ error: error.message, message: 'Hubo un error en la consulta get' });
     }
 };
+
+export const postNoti = async (req, res) => {
+
+}
