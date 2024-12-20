@@ -13,7 +13,7 @@ export const listNoti = async (req, res) =>{
 			error: error.message,
 			message: 'Hubo un error en la consulta get'
 		});
-  };
+    };
 };
 
 export const getNoti = async (req, res) => {
@@ -24,7 +24,7 @@ export const getNoti = async (req, res) => {
         const terms = value.split(/\s+/); // Divide el valor en palabras
         return terms.map(term => ({
             condition: `${field} LIKE ?`, // Construye la condición
-            param: `%${term}%`           // Agrega comodines para búsqueda
+            param: `%${term}%` // Agrega comodines para búsqueda
         }));
     };
 
@@ -79,7 +79,7 @@ export const getNoti = async (req, res) => {
         res.status(500).json({ 
             error: error.message, 
             message: 'Hubo un error en la consulta get' });
-    }
+    };
 };
 
 export const postNoti = async (req, res) => {
@@ -94,12 +94,34 @@ export const postNoti = async (req, res) => {
 		if (resultado.affectedRows > 0) {
 			res.status(200).json({ message: "Notificación guardada exitosamente" });
 		} else {
-			res.status(400).json({ message: "No se pudo guardar la notificación exitosamente" });
+			res.status(400).json({ message: "No se pudo guardar la notificación" });
 		}
 	} catch (error) {
 		res.status(500).json({
 			error: error.message,
 			message: "Hubo un error en la consulta post"
 		});
-	}
+	};
+};
+
+export const putNoti = async (req, res) => {
+    const { titulo, descripcion, recordar_fecha, prioridad, id } = req.body; // Se incluye el ID desde req.body
+
+    try {
+        const [resultado] = await pool.query(
+            `UPDATE notificaciones SET titulo = ?, descripcion = ?, recordar_fecha = ?, prioridad = ?  WHERE id = ?`,
+            [titulo, descripcion, recordar_fecha, prioridad, id] // Parámetros correctamente asignados
+        );
+
+        if (resultado.affectedRows > 0) {
+            res.status(200).json({ message: "Notificación editada exitosamente" });
+        } else {
+            res.status(400).json({ message: "No se pudo editar la notificación" });
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: error.message,
+            message: "Hubo un error en la consulta PUT"
+        });
+    }
 };
