@@ -125,3 +125,23 @@ export const putNoti = async (req, res) => {
         });
     }
 };
+
+export const deleteNoti = async (req, res) =>{
+    const {id} = req.body
+
+    try {
+        const [resultado] = await pool.query(`DELETE FROM notificaciones WHERE id = ${id}`
+        )
+
+            if (resultado.affectedRows > 0) {
+                res.status(200).json({ message: "Se elimino correctamente la notificacion" })
+            } else {
+                res.status(400).json({ message: "No se pudo eliminar la notificacion" })
+            }
+    } catch (error) {
+        res.status(500).json({ 
+            error: error.message,
+            message: "hubo un error en la consulta delete"
+        });
+    };
+};
