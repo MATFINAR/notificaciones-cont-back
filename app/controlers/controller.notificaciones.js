@@ -2,7 +2,7 @@ import pool from "../config/db.mysql.js";
 
 export const listNoti = async (req, res) =>{
 	try {
-		const respuesta = await pool.query('SELECT * FROM notificaciones');
+		const respuesta = await pool.query('SELECT * FROM notificaciones WHERE estado = 1');
 		if (respuesta.length > 0) {
 			res.json(respuesta[0]);
 		} else {
@@ -83,25 +83,26 @@ export const getNoti = async (req, res) => {
 };
 
 export const postNoti = async (req, res) => {
-	const { titulo, descripcion, recordar_fecha, prioridad } = req.body; // Asegúrate de que req.body sea un objeto y no un array
-
-	try {
-		const [resultado] = await pool.query(
-			`INSERT INTO notificaciones (titulo, descripcion, recordar_fecha, prioridad, f_creacion) VALUES (?, ?, ?, ?, NOW())`,
-			[titulo, descripcion, recordar_fecha, prioridad] // Parámetros para prevenir inyecciones SQL
-		);
-
-		if (resultado.affectedRows > 0) {
-			res.status(200).json({ message: "Notificación guardada exitosamente" });
-		} else {
-			res.status(400).json({ message: "No se pudo guardar la notificación" });
-		}
-	} catch (error) {
-		res.status(500).json({
-			error: error.message,
-			message: "Hubo un error en la consulta post"
-		});
-	};
+    const { titulo, descripcion, recordar_fecha, prioridad } = req.body;
+  
+    try {
+        const [resultado] = await pool.query(
+            `INSERT INTO notificaciones (titulo, descripcion, recordar_fecha, prioridad, f_creacion, estado) 
+            VALUES (?, ?, ?, ?, CONVERT_TZ(NOW(), 'SYSTEM', '-10:00'), 1)`,  // Aseguramos que f_creacion esté en UTC
+            [titulo, descripcion, recordar_fecha, prioridad] // No modificamos 'recordar_fecha'
+        );
+  
+    if (resultado.affectedRows > 0) {
+            res.status(200).json({ message: "Notificación guardada exitosamente" });
+        } else {
+            res.status(400).json({ message: "No se pudo guardar la notificación" });
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: error.message,
+            message: "Hubo un error en la consulta post"
+      });
+    }
 };
 
 export const putNoti = async (req, res) => {
