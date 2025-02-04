@@ -1,8 +1,10 @@
 import pool from "../config/db.mysql.js";
 
 export const listNoti = async (req, res) => {
+    const dispositivo_id = req.query.dispositivo_id;
+
     try {
-        const respuesta = await pool.query('SELECT * FROM notificaciones WHERE estado = 1');
+        const respuesta = await pool.query('SELECT * FROM notificaciones WHERE estado = 1 AND dispositivo_id = ?', [dispositivo_id]);
         if (respuesta.length > 0) {
             res.json(respuesta[0]);
         } else {
@@ -84,13 +86,13 @@ export const getNoti = async (req, res) => {
 };
 
 export const postNoti = async (req, res) => {
-    const { titulo, descripcion, recordar_fecha, prioridad } = req.body;
+    const { titulo, descripcion, recordar_fecha, prioridad, dispositivo_id } = req.body;
 
     try {
         const [resultado] = await pool.query(
-            `INSERT INTO notificaciones (titulo, descripcion, recordar_fecha, prioridad, f_creacion, estado) 
-            VALUES (?, ?, ?, ?, CONVERT_TZ(NOW(), 'SYSTEM', '-05:00'), 1)`,  // Aseguramos que f_creacion esté en UTC
-            [titulo, descripcion, recordar_fecha, prioridad] // No modificamos 'recordar_fecha'
+            `INSERT INTO notificaciones (titulo, descripcion, recordar_fecha, prioridad, f_creacion, estado, dispositivo_id) 
+            VALUES (?, ?, ?, ?, CONVERT_TZ(NOW(), 'SYSTEM', '-05:00'), 1, ?)`,  // Aseguramos que f_creacion esté en UTC
+            [titulo, descripcion, recordar_fecha, prioridad, dispositivo_id] // No modificamos 'recordar_fecha'
         );
 
         if (resultado.affectedRows > 0) {
