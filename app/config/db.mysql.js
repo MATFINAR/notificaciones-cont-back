@@ -4,11 +4,11 @@ import { config } from "dotenv";
 config();
 
 const pool = createPool({
-    database: process.env.MYSQLDATABASE,
-    host: process.env.MYSQLHOST,
-    password: "",
     user: process.env.MYSQLUSER,
-    port: process.env.MYSQLPORT
+    host: process.env.MYSQLHOST,
+    password: process.env.MYSQLPASSWORD,
+    port: process.env.MYSQLPORT,
+    database: process.env.MYSQLDATABASE,
 });
 
 export default pool;
